@@ -14,31 +14,29 @@ namespace ApiEstudiante.Controllers
     [ApiController]
     public class PersonaController : ControllerBase
     {
-        private readonly AppDbContext context;
-        public PersonaController(AppDbContext _context)
+        private readonly AppDbContext _context;
+        public PersonaController(AppDbContext context)
         {
-            this.context = _context;
+            this._context = context;
         }
         [HttpGet]
         public ActionResult GetAll()
         {
-            //Error handling Try-catch
             try
             {
-                return Ok(context.persona.ToList());
+                return Ok(_context.persona.ToList());
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-        //api/v1/persona/12563
         [HttpGet("{id}", Name = "GetById")]
         public ActionResult GetById(int id)
         {
             try
             {
-                var persona = context.persona.FirstOrDefault(persona => persona.id == id);
+                var persona = _context.persona.FirstOrDefault(persona => persona.id == id);
                 return Ok(persona);
             }
             catch (Exception ex)
@@ -51,8 +49,8 @@ namespace ApiEstudiante.Controllers
         {
             try
             {
-                context.persona.Add(persona);
-                context.SaveChanges();
+                _context.persona.Add(persona);
+                _context.SaveChanges();
                 return CreatedAtRoute("GetById", new { persona.id }, persona);
             }
             catch (Exception ex)
@@ -61,15 +59,15 @@ namespace ApiEstudiante.Controllers
             }
         }
         [HttpPut("{id}")]
-        public ActionResult Put(int id,[FromBody] Persona persona)
+        public ActionResult Put(int id, [FromBody] Persona persona)
         {
             try
             {
-                if (persona.id == id) 
+                if (persona.id == id)
                 {
-                    context.Entry(persona).State = EntityState.Modified;
-                    context.SaveChanges();
-                    return CreatedAtRoute("GetByIt", new { id = persona.id }, persona);
+                    _context.Entry(persona).State = EntityState.Modified;
+                    _context.SaveChanges();
+                    return CreatedAtRoute("GetById", new { id = persona.id }, persona);
                 }
                 else
                 {
@@ -86,11 +84,11 @@ namespace ApiEstudiante.Controllers
         {
             try
             {
-                var persona = context.persona.FirstOrDefault(p => p.id == id);
+                var persona = _context.persona.FirstOrDefault(p => p.id == id);
                 if (persona != null)
                 {
-                    context.persona.Remove(persona);
-                    context.SaveChanges();
+                    _context.persona.Remove(persona);
+                    _context.SaveChanges();
                     return Ok(id);
                 }
                 else
@@ -98,10 +96,11 @@ namespace ApiEstudiante.Controllers
                     return BadRequest();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }
