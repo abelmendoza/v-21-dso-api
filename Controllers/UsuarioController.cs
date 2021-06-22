@@ -33,6 +33,19 @@ namespace ApiEstudiante.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [HttpGet("{id}")]
+        public ActionResult Get(int id)
+        {
+            try
+            {
+                var usuario = _context.usuario.Include(u => u.persona).Include(u => u.tipoUsuario).FirstOrDefault(u => u.id == id);
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
+
